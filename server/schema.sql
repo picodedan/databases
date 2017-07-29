@@ -1,10 +1,10 @@
+DROP DATABASE chat;
+
+
 CREATE DATABASE chat;
 
 USE chat;
 
-CREATE TABLE messages (
-  /* Describe your table here.*/
-);
 
 /* Create other tables and define schemas for them here! */
 
@@ -15,3 +15,94 @@ CREATE TABLE messages (
  *    mysql -u root < server/schema.sql
  *  to create the database and the tables.*/
 
+-- ---
+-- Globals
+-- ---
+
+-- SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+-- SET FOREIGN_KEY_CHECKS=0;
+
+-- ---
+-- Table 'User'
+-- 
+-- ---
+
+DROP TABLE IF EXISTS `User`;
+    
+CREATE TABLE `User` (
+  `id` INTEGER(3),
+  `userName` VARCHAR(20),
+  PRIMARY KEY (`id`)
+);
+
+-- ---
+-- Table 'chatRoom'
+-- 
+-- ---
+
+DROP TABLE IF EXISTS `chatRoom`;
+    
+CREATE TABLE `chatRoom` (
+  `id` INTEGER(3),
+  `roomName` VARCHAR(10),
+  PRIMARY KEY (`id`)
+);
+
+-- ---
+-- Table 'messageTable'
+-- 
+-- ---
+
+DROP TABLE IF EXISTS `messageTable`;
+    
+CREATE TABLE `messageTable` (
+  `id` INTEGER(4),
+  `timeStamp` TIMESTAMP(6),
+  `user_ID` INTEGER(5),
+  `room_ID` INTEGER(5),
+  `messageText` VARCHAR(200),
+  PRIMARY KEY (`id`)
+);
+
+-- ---
+-- Table 'user_room'
+-- 
+-- ---
+
+DROP TABLE IF EXISTS `user_room`;
+    
+CREATE TABLE `user_room` (
+  `user_ID` INTEGER(5),
+  `room_ID` INTEGER(5)
+);
+
+-- ---
+-- Foreign Keys 
+-- ---
+
+ALTER TABLE `messageTable` ADD FOREIGN KEY (user_ID) REFERENCES `User` (`id`);
+ALTER TABLE `messageTable` ADD FOREIGN KEY (room_ID) REFERENCES `chatRoom` (`id`);
+ALTER TABLE `user_room` ADD FOREIGN KEY (user_ID) REFERENCES `User` (`id`);
+ALTER TABLE `user_room` ADD FOREIGN KEY (room_ID) REFERENCES `chatRoom` (`id`);
+
+-- ---
+-- Table Properties
+-- ---
+
+-- ALTER TABLE `User` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `chatRoom` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `messageTable` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `user_room` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ---
+-- Test Data
+-- ---
+
+-- INSERT INTO `User` (`id`,`userName`) VALUES
+-- ('','');
+-- INSERT INTO `chatRoom` (`id`,`roomName`) VALUES
+-- ('','');
+-- INSERT INTO `messageTable` (`id`,`timeStamp`,`user_ID`,`room_ID`,`messageText`) VALUES
+-- ('','','','','');
+-- INSERT INTO `user_room` (`user_ID`,`room_ID`) VALUES
+-- ('','');
