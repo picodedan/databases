@@ -27,11 +27,11 @@ USE chat;
 -- 
 -- ---
 
-DROP TABLE IF EXISTS `User`;
+DROP TABLE IF EXISTS `user`;
     
-CREATE TABLE `User` (
-  `id` INTEGER(3),
-  `userName` VARCHAR(20),
+CREATE TABLE `user` (
+  `id` INTEGER(5) AUTO_INCREMENT,
+  `username` VARCHAR(20),
   PRIMARY KEY (`id`)
 );
 
@@ -43,8 +43,8 @@ CREATE TABLE `User` (
 DROP TABLE IF EXISTS `chatRoom`;
     
 CREATE TABLE `chatRoom` (
-  `id` INTEGER(3),
-  `roomName` VARCHAR(10),
+  `id` INTEGER(5) AUTO_INCREMENT,
+  `roomname` VARCHAR(10),
   PRIMARY KEY (`id`)
 );
 
@@ -56,11 +56,11 @@ CREATE TABLE `chatRoom` (
 DROP TABLE IF EXISTS `messageTable`;
     
 CREATE TABLE `messageTable` (
-  `id` INTEGER(4),
+  `id` INTEGER(5) AUTO_INCREMENT,
   `timeStamp` TIMESTAMP(6),
   `user_ID` INTEGER(5),
   `room_ID` INTEGER(5),
-  `messageText` VARCHAR(200),
+  `text` VARCHAR(200),
   PRIMARY KEY (`id`)
 );
 
@@ -80,9 +80,9 @@ CREATE TABLE `user_room` (
 -- Foreign Keys 
 -- ---
 
-ALTER TABLE `messageTable` ADD FOREIGN KEY (user_ID) REFERENCES `User` (`id`);
+ALTER TABLE `messageTable` ADD FOREIGN KEY (user_ID) REFERENCES `user` (`id`);
 ALTER TABLE `messageTable` ADD FOREIGN KEY (room_ID) REFERENCES `chatRoom` (`id`);
-ALTER TABLE `user_room` ADD FOREIGN KEY (user_ID) REFERENCES `User` (`id`);
+ALTER TABLE `user_room` ADD FOREIGN KEY (user_ID) REFERENCES `user` (`id`);
 ALTER TABLE `user_room` ADD FOREIGN KEY (room_ID) REFERENCES `chatRoom` (`id`);
 
 -- ---
