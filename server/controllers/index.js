@@ -14,8 +14,6 @@ module.exports = {
     get: function (req, res) { // a function which handles a get request for all messages
       res.writeHead(200, headers);
       models.messages.get(function (dbResult) {
-        //console.log(results);
-        //format results?
         var data = {
           results: dbResult
         };
@@ -25,6 +23,7 @@ module.exports = {
     }, 
     post: function (req, res) { // a function which handles posting a message to the database
       var postData = [];
+      debugger;
       req.on('error', (error) => {
         res.writeHead(400, headers);
         res.end();

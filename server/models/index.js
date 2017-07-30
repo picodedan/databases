@@ -1,13 +1,14 @@
 var db = require('../db');
+var promise = require('bluebird');
 
 var getQuery = {
   m: 'SELECT user.username, chatRoom.roomname, messageTable.text FROM user, chatRoom, messageTable WHERE (messageTable.user_ID = user.id)',
-  u: 'SELECT username FROM user',
-  r: 'SELECT roomname FROM chatRoom'
+  u: 'SELECT id FROM user WHERE username =',
+  r: 'SELECT id FROM chatRoom WHERE roomname ='
 };
 
 var postQuery = {
-  m: 'INSERT INTO messageTable (id, user_ID, room_ID, messageText) VALUES ',
+  m: 'INSERT INTO messageTable (id, user_ID, room_ID, messageTable.text) VALUES ',
   u: 'INSERT INTO user (id, username) VALUES ',
   r: 'INSERT INTO chatRoom (id, roomname) VALUES'
 };
@@ -15,14 +16,12 @@ var postQuery = {
 module.exports = {
   messages: {
     get: function (callback) {
-      //inputs:
-      //outputs:
+
       db.dbConnection.query(getQuery.m, function(error, results, fields) {
         if (error) {
           throw error;
           callback(error);
         }
-        //console.log(JSON.parse(results));
         callback(results);
         //db.dbConnection.end();
       });
@@ -30,9 +29,14 @@ module.exports = {
        
     }, // a function which produces all the messages
     post: function (msgObj, callback) {
+      
+      db.dbConnection.query(getQuery.u + 'msgObj.username');
+      
+      
       db.dbConnection.query(postQuery.m +
         `( ${msgObj.id}, ${msgObj.userId}, ${msgObj.roomId}, ${msgObj.text})`, 
         function(error, results, fields) {
+          debugger;
           if (error) { 
             throw error;
             callback(error);

@@ -67,7 +67,6 @@ var app = {
       success: function(data) {
 
         console.log('GET SUCESSS WITH DATA ', data);
-        debugger;
         // Don't bother if we have nothing to work with
         if (!data.results || !data.results.length) { return; }
 
