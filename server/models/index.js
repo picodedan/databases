@@ -2,107 +2,67 @@ var db = require('../db');
 var promise = require('bluebird');
 
 var getQuery = {
-  m: 'SELECT user.username, chatRoom.roomname, messageTable.text FROM user, chatRoom, messageTable WHERE (messageTable.user_ID = user.id)',
-  u: 'SELECT id FROM user WHERE username =',
-  r: 'SELECT id FROM chatRoom WHERE roomname ='
+  m: 'SELECT user.username, chatRoom.roomname, messageTable.text \
+      FROM user, chatRoom, messageTable \
+      WHERE (messageTable.user_ID = user.id & messageTable.room_ID = chatRoom.id)',
+  u: 'SELECT * FROM user',
+  r: 'SELECT * FROM chatRoom'
 };
 
 var postQuery = {
-  m: 'INSERT INTO messageTable (id, user_ID, room_ID, messageTable.text) VALUES ',
-  u: 'INSERT INTO user (id, username) VALUES ',
-  r: 'INSERT INTO chatRoom (id, roomname) VALUES'
+  m: 'INSERT INTO messageTable (text, user_ID, room_ID) \
+      VALUES (?, \
+      (SELECT id FROM user WHERE username= ?), \
+      (SELECT id FROM chatRoom WHERE roomname= ?))',
+  u: 'INSERT INTO user (username) VALUES (?)',
+  r: 'INSERT INTO chatRoom (roomname) VALUES (?)'
 };
 
 module.exports = {
   messages: {
+    // Ditto as above.
     get: function (callback) {
-
-      db.dbConnection.query(getQuery.m, function(error, results, fields) {
-        if (error) {
-          throw error;
-          callback(error);
-        }
-        callback(results);
-        //db.dbConnection.end();
+      db.query(getQuery.m, function(err, res, f) {
+        callback(err, res);
       });
       
-       
-    }, // a function which produces all the messages
-    post: function (msgObj, callback) {
-      
-      db.dbConnection.query(getQuery.u + 'msgObj.username');
-      
-      
-      db.dbConnection.query(postQuery.m +
-        `( ${msgObj.id}, ${msgObj.userId}, ${msgObj.roomId}, ${msgObj.text})`, 
-        function(error, results, fields) {
-          debugger;
-          if (error) { 
-            throw error;
-            callback(error);
-          }
-          console.log(results);
-          callback(results);
-          db.dbConnection.end();
-        });
+    },
+    post: function (messageParams, callback) {
+      db.query(postQuery.m, messageParams, (err, res) => {
+        callback(err, res);
+      });
     } // a function which can be used to insert a message into the database
   },
 
   users: {
     // Ditto as above.
     get: function (callback) {
-      db.dbConnection.query(getQuery.u, function(error, results, fields) {
-        if (error) {
-          throw error;
-        }
-        console.log(results);
-        callback(results);
-        db.dbConnection.end(); 
+      db.query(getQuery.u, function(err, res, f) {
+        callback(err, res);
       });
       
     },
-    post: function (userObj, callback) {
-      db.dbConnection.query(postQuery.u +
-        `( ${userObj.id}, ${userObj.username})`, 
-        function(error, results, fields) {
-          if (error) { 
-            throw error;
-            callback(error);
-          }
-          console.log(results);
-          callback(results);
-          db.dbConnection.end();
-        });
+    post: function (userParam, callback) {
+      db.query(postQuery, userObj.username, (err, res) => {
+        callback(err, res);
+      });
     } // a function which can be used to insert a message into the database
   },
   
   room: {
     // Ditto as above.
     get: function (callback) {
-      db.dbConnection.query(getQuery.r, function(error, results, fields) {
-        if (error) {
-          throw error;
-        }
-        console.log(results);
-        callback(results);
-        db.dbConnection.end(); 
+      db.query(getQuery.r, function(err, res, f) {
+        callback(err, res);
       });
       
     },
-    post: function (msgObj, callback) {
-      db.dbConnection.query(postQuery.r +
-        `( ${msgObj.id}, ${msgObj.roomname})`, 
-        function(error, results, fields) {
-          if (error) { 
-            throw error;
-            callback(error);
-          }
-          console.log(results);
-          callback(results);
-          db.dbConnection.end();
-        });
+    post: function (roomParam, callback) {
+      db.query(postQuery.r, roomParam, (err, res) => {
+        callback(err, res);
+      });
     } // a function which can be used to insert a message into the database
-  }
+  },
 };
 
 

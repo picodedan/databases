@@ -12,31 +12,19 @@ var headers = {
 module.exports = {
   messages: {
     get: function (req, res) { // a function which handles a get request for all messages
-      res.writeHead(200, headers);
-      models.messages.get(function (dbResult) {
+      models.messages.get(function (err, results) {
         var data = {
-          results: dbResult
+          results: results
         };
-        res.end(JSON.stringify(data));
+        res.json(data);
       });
       
     }, 
     post: function (req, res) { // a function which handles posting a message to the database
-      var postData = [];
-      debugger;
-      req.on('error', (error) => {
-        res.writeHead(400, headers);
-        res.end();
-      }).on('data', (chunk) => {
-        res.writeHead(201, headers);
-        postData.push(chunk);
-        
-      }).on('end', () => {
-        var message = [].concat(postData).toString();
-        var msgObj = JSON.parse(message);
-        models.messages.post(msgObj, function(results) {
-          res.end();
-        });
+      var postData = [];//[req.body[text], req.body[username], req.body[roomname]];
+      console.log(req.body);
+      models.messages.post(postData, function(err, results) {
+        res.json(results);
       });
     },
     options: function (req, res) {
@@ -47,37 +35,69 @@ module.exports = {
 
   users: {
     get: function (req, res) { // a function which handles a get request for all messages
-      res.writeHead(200, headers);
-      models.users.get(function (results) {
-        console.log(results);
+      models.users.get(function (err, results) {
+        console.log(res);
         //format results?
-        res.end(results);
+        res.json(results);
       });
       
     }, 
     post: function (req, res) { // a function which handles posting a message to the database
-      var postData = [];
-      req.on('error', (error) => {
-        res.writeHead(400, headers);
-        res.end();
-      }).on('data', (chunk) => {
-        res.writeHead(201, headers);
-        postData.push(chunk);
-        
-      }).on('end', () => {
-        var userName = [].concat(postData).toString();
-        var userObj = JSON.parse(userName);
-        models.users.post(userObj, function(results) {
-          res.end();
-        });
+      var postData = [req.body[username]];
+      models.users.post(postData, function(err, results) {
+        res.json(results);
       });
     },
     options: function (req, res) {
       res.writeHead(201, headers);
       res.end(); 
     } 
+  }, 
+  //sequelize version
+  sMessages: {
+    get: function (req, res) { // a function which handles a get request for all messages
+      models.messages.get(function (err, results) {
+        var data = {
+          results: results
+        };
+        res.json(data);
+      });
+      
+    }, 
+    post: function (req, res) { // a function which handles posting a message to the database
+      var postData = [];//[req.body[text], req.body[username], req.body[roomname]];
+      console.log(req.body);
+      models.messages.post(postData, function(err, results) {
+        res.json(results);
+      });
+    },
+    options: function (req, res) {
+      res.writeHead(201, headers);
+      res.end(); 
+    }
+    
+  },
+  sUsers: {
+    get: function (req, res) { // a function which handles a get request for all messages
+      Message.findAll({ include: [User], include: [Room] })  //sequelize syntax check
+        .complete((err, results) => {
+          res.json(results);
+        });
+    }, 
+    post: function (req, res) { // a function which handles posting a message to the database
+      var postData = [req.body[username]];
+      models.users.post(postData, function(err, results) {
+        res.json(results);
+      });
+    },
+    options: function (req, res) {
+      res.writeHead(201, headers);
+      res.end(); 
+    }
     
   }
 
 };
+
+
 
